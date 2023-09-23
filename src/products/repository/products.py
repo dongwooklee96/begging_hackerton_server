@@ -56,4 +56,5 @@ class ProductRepository:
             valid_end_time=valid_end_time,
         )
         self.session.add(product)
-        await self.session.commit()
+        await self.session.flush()
+        return product
