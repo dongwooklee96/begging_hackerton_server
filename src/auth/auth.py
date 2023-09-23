@@ -6,7 +6,11 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
+
+from database.connection import get_session
+from database.models import User
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -30,19 +34,8 @@ class Token(BaseModel):
     token_type: str
 
 
-class TokenData(BaseModel):
-    username: Union[str, None] = None
-
-
-class User(BaseModel):
-    username: str
-    email: Union[str, None] = None
-    full_name: Union[str, None] = None
-    disabled: Union[bool, None] = None
-
-
-class UserInDB(User):
-    hashed_password: str
+class TokenEmail(BaseModel):
+    user_email: Union[str, None] = None
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -60,8 +53,8 @@ def get_password_hash(password):
 
 def get_user(db, username: str):
     if username in db:
-        user_dict = db[username]
-        return UserInDB(**user_dict)
+        db[username]
+        return "foo"
 
 
 def authenticate_user(fake_db, username: str, password: str):
@@ -78,27 +71,35 @@ def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
+        # TODO: JWT 토큰 만료 시간 없애기 (영구)
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+async def get_current_user(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    session: AsyncSession = Depends(get_session),
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+    from src.user.application.user import UserService
+    from src.user.repository.users import UserRepository
+
+    user_service = UserService(user_repository=UserRepository(session=session))
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
+        user_email: str = payload.get("sub")
+        if user_email is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
+        token_data = TokenEmail(user_email=user_email)
     except JWTError:
         raise credentials_exception
-    user = get_user(fake_users_db, username=token_data.username)
+    user = await user_service.get_user_by_email(email=user_email)
     if user is None:
         raise credentials_exception
     return user
@@ -107,8 +108,6 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
 async def get_current_active_user(
     current_user: Annotated[User, Depends(get_current_user)]
 ):
-    if current_user.disabled:
-        raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
 

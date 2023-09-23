@@ -5,13 +5,13 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 
+from database.models import User
 from src.auth.auth import (
     Token,
     authenticate_user,
     fake_users_db,
     ACCESS_TOKEN_EXPIRE_MINUTES,
     create_access_token,
-    User,
     get_current_active_user,
 )
 from src.router.auth import auth_router
