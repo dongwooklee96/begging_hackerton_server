@@ -47,14 +47,14 @@ class DevelopmentConfig(Config):
     """Configurations for Development."""
 
     DEBUG = True
-    HOST = ""
+    HOST = "database-1.cxfrkunk9j5y.ap-northeast-2.rds.amazonaws.com"
     USER = "postgres"
-    PASSWORD = "cube1234"
+    PASSWORD = "password"
     PORT = 5432
     DB = "postgres"
 
     SQLALCHEMY_DATABASE_URI = (
-        os.environ.get("DEVELOPMENT_DATABASE_URL")
+        os.environ.get("PRODUCTION_DATABASE_URL")
         or f"postgresql+asyncpg://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB}"
     )
 
@@ -99,9 +99,9 @@ class ProductionConfig(Config):
     # Setting this variable to false disables the docs on education
     API_DOCS_URL = False
 
-    HOST = ""
+    HOST = "database-1.cxfrkunk9j5y.ap-northeast-2.rds.amazonaws.com"
     USER = "postgres"
-    PASSWORD = "pass"
+    PASSWORD = "password"
     PORT = 5432
     DB = "postgres"
 
