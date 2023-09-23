@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
+from starlette.responses import JSONResponse
 
 from database.connection import get_session
 from database.models import User, Product
@@ -93,7 +94,8 @@ async def invalid_product(
     results = await session.execute(statement)
     product = results.scalar_one_or_none()
     if not product:
-        return {"message": "상품이 존재하지 않습니다."}
+        return JSONResponse(content={"message": "존재하지 않는 상품"}, status_code=400)
+
     product.is_valid = False
     session.add(product)
     await session.commit()
