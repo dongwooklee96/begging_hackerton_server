@@ -4,7 +4,8 @@ version = "0.1.0"
 description = ""
 authors = ["Lee Dong WOok <sh95119@gmail.com>"]
 readme = "README.md"
-packages = [{include = "vinyl_search_server"}]
+packages = [{include = "begging_hackerton_server"}]
+
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"

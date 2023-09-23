@@ -32,10 +32,10 @@ class LocalConfig(Config):
     TESTING = True
     DEBUG = True
     HOST = "localhost"
-    USER = "root"
-    PASSWORD = "pass"
+    USER = "postgres"
+    PASSWORD = "password"
     PORT = 5432
-    DB = "db"
+    DB = "postgres"
 
     SQLALCHEMY_DATABASE_URI = (
         os.environ.get("LOCAL_DATABASE_URL")
