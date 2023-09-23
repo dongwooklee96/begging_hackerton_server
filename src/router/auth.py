@@ -1,5 +1,11 @@
 import requests
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from database.connection import get_session
+from src.auth.auth import generate_access_token
+from src.user.application.user import UserService
+from src.user.repository.users import UserRepository
 
 auth_router = APIRouter(
     tags=["Auth"],
@@ -7,7 +13,7 @@ auth_router = APIRouter(
 
 
 @auth_router.get("/login/kakao")
-def kakao_login(code: str):
+async def kakao_login(code: str, session: AsyncSession = Depends(get_session)):
     """
     https://kauth.kakao.com/oauth/authorize?client_id=d12d5a49f7a6ae9c1fb44443ec2f18fb&redirect_uri=http://localhost:8000/api/v1/auth/login/kakao&response_type=code
     위의 URL로 접속한 다음에, 이루어지는 로직
@@ -40,6 +46,20 @@ def kakao_login(code: str):
     response = requests.post(url, headers=headers, data=data)
     response_dict = response.json().get("kakao_account")
 
-    response_dict.get("email")
-    response_dict.get("profile").get("nickname")
+    email = response_dict.get("email")
+    nickname = response_dict.get("profile").get("nickname")
     response_dict.get("profile").get("thumbnail_image_url")
+
+    # 유저 이메일을 조회했을 때 회원이 존재한다면, 회원가입 아니면 액세스 토큰을 만들어서 반환
+
+    # STEP 1. 이메일을 조회한다.
+    user_service = UserService(user_repository=UserRepository(session=session))
+    user = await user_service.get_user_by_email(email=email)
+    # 유저가 존재하면, 액세스 토큰을 만들어서 전달한다.
+    if user:
+        return await generate_access_token(email=email)
+    else:
+        # 유저가 존재하지 않으면 회원 가입 및 생성 및 토큰을 전달한다.
+        user = await user_service.create_user(nickname=nickname, email=email)
+        response = await generate_access_token(email=email)
+        return response
