@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
+from sqlalchemy import Column, BigInteger
 from sqlmodel import Field
 from sqlmodel import SQLModel
 
@@ -32,7 +33,7 @@ class User(TimestampModel, table=True):
     __tablename__ = "user"
 
     user_key: int = Field(primary_key=True)
-    id: int
+    id: int = Field(sa_column=Column(BigInteger()))
     nick_name: Optional[str] = None
     profile_url: Optional[str] = None
 

@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from sqlalchemy import text
 from sqlmodel import select
 
 from database.models import User
@@ -37,10 +38,14 @@ class UserRepository:
         """
         아이디와 일치하는 유저를 반환한다.
         """
-        statement = select(User).where(User.id == id)
-        result = await self.session.execute(statement)
-        user = result.scalar_one_or_none()
-        return user
+        statement = text(
+            """
+        SELECT user_key FROM "user" WHERE id = :id
+        """
+        )
+        result = await self.session.execute(statement, {"id": id})
+        user_key = result.one_or_none()
+        return user_key
 
     async def get_user_by_user_key(self, user_key: int):
         """
