@@ -32,8 +32,9 @@ class User(TimestampModel, table=True):
     __tablename__ = "user"
 
     user_key: int = Field(primary_key=True)
-    email: str
-    nickname: str
+    id: int
+    nick_name: Optional[str] = None
+    profile_url: Optional[str] = None
 
 
 class Category(TimestampModel, table=True):

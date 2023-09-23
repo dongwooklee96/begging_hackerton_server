@@ -83,13 +83,12 @@ async def get_current_user(
     user_service = UserService(user_repository=UserRepository(session=session))
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_email: str = payload.get("sub")
-        if user_email is None:
+        user_key: int = payload.get("sub")
+        if user_key is None:
             raise credentials_exception
-        token_data = TokenEmail(user_email=user_email)
     except JWTError:
         raise credentials_exception
-    user = await user_service.get_user_by_email(email=user_email)
+    user = await user_service.get_user_by_user_key(user_key=int(user_key))
     if user is None:
         raise credentials_exception
     return user
@@ -101,12 +100,12 @@ async def get_current_active_user(
     return current_user
 
 
-async def generate_access_token(email: str):
+async def generate_access_token(user_key: int):
     """
     :return: 액세스 토큰을 만들어서, 반환한다.
     """
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": email}, expires_delta=access_token_expires
+        data={"sub": str(user_key)}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
