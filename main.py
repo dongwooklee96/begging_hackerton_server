@@ -6,6 +6,7 @@ from src.router.auth import auth_router
 from src.router.category import category_router
 from src.router.game import game_router
 from src.router.product import product_router
+from src.router.user import user_router
 
 app = FastAPI()
 
@@ -23,6 +24,7 @@ app.include_router(auth_router, prefix="/api/v1/auth")
 app.include_router(product_router, prefix="/api/v1/product")
 app.include_router(category_router, prefix="/api/v1/category")
 app.include_router(game_router, prefix="/api/v1/game")
+app.include_router(user_router, prefix="/api/v1/user")
 
 
 @app.on_event("startup")
