@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import Depends, FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
 from database.connection import create_schema
 from database.models import User
@@ -11,6 +12,16 @@ from src.router.auth import auth_router
 from src.router.product import product_router
 
 app = FastAPI()
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(auth_router, prefix="/api/v1/auth")
 app.include_router(product_router, prefix="/api/v1/product")

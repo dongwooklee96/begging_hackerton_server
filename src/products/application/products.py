@@ -8,6 +8,19 @@ class ProductService:
     def __init__(self, product_repository: ProductRepository):
         self.repository = product_repository
 
+    async def get_products(self):
+        """
+        상품 목록 조회
+        """
+        products = await self.repository.get_products()
+        return products
+
+    async def get_product_detail(self, product_key: int):
+        """
+        상품 디테일 조회
+        """
+        return await self.repository.get_product_detail(product_key=product_key)
+
     async def create_product(
         self,
         title: str,
@@ -22,6 +35,9 @@ class ProductService:
         valid_start_time: datetime,
         valid_end_time: datetime,
     ):
+        """
+        상품 생성
+        """
         await self.repository.create_product(
             title=title,
             category_key=category_key,

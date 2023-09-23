@@ -42,37 +42,32 @@ async def create_product(
     )
 
 
-@product_router.put("/")
-def update_product(current_user: Annotated[User, Depends(get_current_active_user)]):
-    """
-    상품 수정
-    """
-    print(current_user)
-    return "pong"
-
-
-@product_router.delete("/")
-def delete_product(current_user: Annotated[User, Depends(get_current_active_user)]):
-    """
-    상품 삭제
-    """
-    print(current_user)
-    return "pong"
-
-
 @product_router.get("/list")
-def get_products(current_user: Annotated[User, Depends(get_current_active_user)]):
+async def get_products(
+    # current_user: Annotated[User, Depends(get_current_active_user)],
+    session: AsyncSession = Depends(get_session),
+):
     """
     상품 목록 조회
     """
-    print(current_user)
-    return "pong"
+    product_service = ProductService(
+        product_repository=ProductRepository(session=session)
+    )
+    products = await product_service.get_products()
+    return products
 
 
-@product_router.get("/")
-def get_product_detail(current_user: Annotated[User, Depends(get_current_active_user)]):
+@product_router.get("/{product_key}")
+async def get_product_detail(
+    # current_user: Annotated[User, Depends(get_current_active_user)],
+    product_key: int,
+    session: AsyncSession = Depends(get_session),
+):
     """
     상품 상세 조회
     """
-    print(current_user)
-    return "pong"
+    product_service = ProductService(
+        product_repository=ProductRepository(session=session)
+    )
+    product = await product_service.get_product_detail(product_key=product_key)
+    return product

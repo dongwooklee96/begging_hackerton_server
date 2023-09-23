@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from sqlmodel import select
+
 from database.models import Product
 from src.products.dtos.dtos import GameType
 
@@ -7,6 +9,24 @@ from src.products.dtos.dtos import GameType
 class ProductRepository:
     def __init__(self, session):
         self.session = session
+
+    async def get_product_detail(self, product_key: int):
+        """
+        상품 디테일 조회
+        """
+        statement = select(Product).where(Product.product_key == product_key)
+        results = await self.session.exec(statement)
+        product = results.first()
+        return product
+
+    async def get_products(self):
+        """
+        상품 목록 조회
+        """
+        statement = select(Product)
+        results = await self.session.exec(statement)
+        products = results.all()
+        return products
 
     async def create_product(
         self,
