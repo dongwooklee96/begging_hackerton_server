@@ -9,6 +9,7 @@ from src.auth.auth import (
     get_current_active_user,
 )
 from src.router.auth import auth_router
+from src.router.category import category_router
 from src.router.product import product_router
 
 app = FastAPI()
@@ -25,6 +26,7 @@ app.add_middleware(
 
 app.include_router(auth_router, prefix="/api/v1/auth")
 app.include_router(product_router, prefix="/api/v1/product")
+app.include_router(category_router, prefix="/api/v1/category")
 
 
 @app.on_event("startup")
