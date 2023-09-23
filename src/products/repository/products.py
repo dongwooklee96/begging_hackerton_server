@@ -23,7 +23,7 @@ class ProductRepository:
         """
         상품 목록 조회
         """
-        statement = select(Product)
+        statement = select(Product).where(Product.is_valid == True)
         results = await self.session.exec(statement)
         products = results.all()
         return products

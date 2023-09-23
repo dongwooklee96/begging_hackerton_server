@@ -2,9 +2,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlmodel import select
 
 from database.connection import get_session
-from database.models import User
+from database.models import User, Product
 from src.auth.auth import get_current_active_user
 from src.game.repository.game import GameRepository
 from src.products.application.products import ProductService
@@ -77,3 +78,22 @@ async def get_product_detail(
     )
     product = await product_service.get_product_detail(product_key=product_key)
     return product
+
+
+@product_router.delete("/{product_key}/invalid")
+async def invalid_product(
+    # current_user: Annotated[User, Depends(get_current_active_user)],
+    product_key: int,
+    session: AsyncSession = Depends(get_session),
+):
+    """
+    상품 유효하지 않게 변경
+    """
+    statement = select(Product).where(Product.product_key == product_key)
+    results = await session.execute(statement)
+    product = results.scalar_one_or_none()
+    if not product:
+        return {"message": "상품이 존재하지 않습니다."}
+    product.is_valid = False
+    session.add(product)
+    await session.commit()
