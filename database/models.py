@@ -90,6 +90,7 @@ class Game(TimestampModel, table=True):
     game_key: int = Field(primary_key=True)
     user_key: int
     product_key: int
+    is_started: bool = Field(default=False)
 
 
 class ClickGame(TimestampModel, table=True):
