@@ -146,6 +146,11 @@ class UserGame(TimestampModel, table=True):
     user_game_key: int = Field(primary_key=True)
     game_key: int
     user_key: int
+    product_location: str = Field(nullable=True)
+    latitude: float = Field(nullable=True)
+    longitude: float = Field(nullable=True)
+    is_winner: bool = Field(nullable=True)
+    get_product_time: datetime = Field(nullable=True)
 
 
 class ProductGame(TimestampModel, table=True):
