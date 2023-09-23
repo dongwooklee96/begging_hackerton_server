@@ -123,7 +123,6 @@ class ColorGame(TimestampModel, table=True):
 
 
 # ----------------------------------------------------
-
 # 엔티티 관계 테이블
 # ----------------------------------------------------
 class PrizeUser(TimestampModel, table=True):
