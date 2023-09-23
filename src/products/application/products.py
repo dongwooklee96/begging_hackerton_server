@@ -1,12 +1,16 @@
 from datetime import datetime
 
+from src.game.repository.game import GameRepository
 from src.products.dtos.dtos import GameType
 from src.products.repository.products import ProductRepository
 
 
 class ProductService:
-    def __init__(self, product_repository: ProductRepository):
+    def __init__(
+        self, product_repository: ProductRepository, game_repository: GameRepository
+    ):
         self.repository = product_repository
+        self.game_repository = game_repository
 
     async def get_products(self):
         """
@@ -38,7 +42,7 @@ class ProductService:
         """
         상품 생성
         """
-        await self.repository.create_product(
+        product = await self.repository.create_product(
             title=title,
             category_key=category_key,
             description=description,
@@ -51,3 +55,7 @@ class ProductService:
             valid_start_time=valid_start_time,
             valid_end_time=valid_end_time,
         )
+        await self.game_repository.create_game(
+            product_key=product.product_key, user_key=user_key
+        )
+        return product

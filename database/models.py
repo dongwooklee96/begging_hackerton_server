@@ -32,8 +32,8 @@ class User(TimestampModel, table=True):
     __tablename__ = "user"
 
     user_key: int = Field(primary_key=True)
-    email: str = Field()
-    nickname: str = Field()
+    email: str
+    nickname: str
 
 
 class Category(TimestampModel, table=True):
@@ -44,7 +44,7 @@ class Category(TimestampModel, table=True):
     __tablename__ = "category"
 
     category: int = Field(primary_key=True)
-    category_name: str = Field()
+    category_name: str
 
 
 class Product(TimestampModel, table=True):
@@ -77,7 +77,7 @@ class Prize(TimestampModel, table=True):
     __tablename__ = "prize"
 
     prize_key: int = Field(primary_key=True)
-    prize_name: str = Field()
+    prize_name: str
 
 
 class Game(TimestampModel, table=True):
@@ -88,7 +88,8 @@ class Game(TimestampModel, table=True):
     __tablename__ = "game"
 
     game_key: int = Field(primary_key=True)
-    user_key: int = Field()
+    user_key: int
+    product_key: int
 
 
 class ClickGame(TimestampModel, table=True):
@@ -98,7 +99,7 @@ class ClickGame(TimestampModel, table=True):
 
     __tablename__ = "click_game"
     click_game_key: int = Field(primary_key=True)
-    game_key: int = Field()
+    game_key: int
 
 
 class TimeLimitGame(TimestampModel, table=True):
@@ -108,7 +109,7 @@ class TimeLimitGame(TimestampModel, table=True):
 
     __tablename__ = "time_limit_game"
     time_limit_game_key: int = Field(primary_key=True)
-    game_key: int = Field()
+    game_key: int
 
 
 class ColorGame(TimestampModel, table=True):
@@ -118,7 +119,7 @@ class ColorGame(TimestampModel, table=True):
 
     __tablename__ = "color_game"
     color_game_key: int = Field(primary_key=True)
-    game_key: int = Field()
+    game_key: int
 
 
 # ----------------------------------------------------
@@ -132,8 +133,8 @@ class PrizeUser(TimestampModel, table=True):
 
     __tablename__ = "prize_user"
     prize_user_key: int = Field(primary_key=True)
-    prize_key: int = Field()
-    user_key: int = Field()
+    prize_key: int
+    user_key: int
 
 
 class UserGame(TimestampModel, table=True):
@@ -144,8 +145,8 @@ class UserGame(TimestampModel, table=True):
 
     __tablename__ = "user_game"
     user_game_key: int = Field(primary_key=True)
-    game_key: int = Field()
-    user_key: int = Field()
+    game_key: int
+    user_key: int
 
 
 class ProductGame(TimestampModel, table=True):
@@ -156,8 +157,8 @@ class ProductGame(TimestampModel, table=True):
 
     __tablename__ = "product_game"
     product_game_key: int = Field(primary_key=True)
-    product_key: int = Field()
-    game_key: int = Field()
+    product_key: int
+    game_key: int
 
 
 # ----------------------------------------------------

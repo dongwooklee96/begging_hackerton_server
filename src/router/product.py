@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.connection import get_session
 from database.models import User
 from src.auth.auth import get_current_active_user
+from src.game.repository.game import GameRepository
 from src.products.application.products import ProductService
 from src.products.dtos.dtos import CreateProductReq
 from src.products.repository.products import ProductRepository
@@ -25,9 +26,10 @@ async def create_product(
     상품 생성
     """
     product_service = ProductService(
-        product_repository=ProductRepository(session=session)
+        product_repository=ProductRepository(session=session),
+        game_repository=GameRepository(session=session),
     )
-    await product_service.create_product(
+    product = await product_service.create_product(
         title=req.title,
         category_key=req.category_key,
         description=req.description,
@@ -40,6 +42,8 @@ async def create_product(
         valid_start_time=req.valid_start_time,
         valid_end_time=req.valid_end_time,
     )
+    await session.commit()
+    return product
 
 
 @product_router.get("/list")
@@ -51,7 +55,8 @@ async def get_products(
     상품 목록 조회
     """
     product_service = ProductService(
-        product_repository=ProductRepository(session=session)
+        product_repository=ProductRepository(session=session),
+        game_repository=GameRepository(session=session),
     )
     products = await product_service.get_products()
     return products
@@ -67,7 +72,8 @@ async def get_product_detail(
     상품 상세 조회
     """
     product_service = ProductService(
-        product_repository=ProductRepository(session=session)
+        product_repository=ProductRepository(session=session),
+        game_repository=GameRepository(session=session),
     )
     product = await product_service.get_product_detail(product_key=product_key)
     return product
