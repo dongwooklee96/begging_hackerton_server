@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlmodel import select
 
 from database.models import User
@@ -14,10 +16,11 @@ class UserRepository:
         user = User(
             nickname=nickname,
             email=email,
+            created_at=datetime.now(),
+            updated_at=datetime.now(),
             deleted=False,
         )
         self.session.add(user)
-        self.session.commit()
         return user
 
     async def get_user_by_email(self, email):
