@@ -69,6 +69,7 @@ class Product(TimestampModel, table=True):
     valid_start_time: datetime
     valid_end_time: datetime
     is_valid: Optional[bool] = True
+    image_url: Optional[str] = None
 
 
 class Prize(TimestampModel, table=True):
