@@ -9,6 +9,7 @@ from src.router.product import product_router
 from src.router.user import user_router
 
 app = FastAPI()
+app.router.redirect_slashes = False
 
 origins = ["*"]
 
