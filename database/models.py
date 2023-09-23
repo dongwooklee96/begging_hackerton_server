@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from sqlmodel import Field
 from sqlmodel import SQLModel
@@ -65,7 +66,7 @@ class Product(TimestampModel, table=True):
     user_key: int
     valid_start_time: datetime
     valid_end_time: datetime
-    is_valid: bool
+    is_valid: Optional[bool] = True
 
 
 class Prize(TimestampModel, table=True):
