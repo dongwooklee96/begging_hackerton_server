@@ -103,6 +103,25 @@ class WinGameReq(BaseModel):
     latitude: float
 
 
+@game_router.post("/start/{product_key}")
+async def start_game(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    product_key: int,
+    session: AsyncSession = Depends(get_session),
+):
+    """
+    게임이 시작된다.
+    """
+    statement = select(Game).where(Game.product_key == product_key)
+    result = await session.execute(statement)
+    game = result.scalar_one_or_none()
+    if not game:
+        return JSONResponse(content={"message": "게임이 존재하지 않습니다."}, status_code=400)
+    game.is_started = True
+    session.add(game)
+    await session.commit()
+
+
 @game_router.post("/win/{product_key}")
 async def win_game(
     current_user: Annotated[User, Depends(get_current_active_user)],
@@ -138,6 +157,7 @@ async def win_game(
     current_user_joined_game.longitude = req.longitude
     current_user_joined_game.latitude = req.latitude
 
+    session.add(current_user_joined_game)
     await session.commit()
 
     return JSONResponse(content={"message": "success"}, status_code=204)
