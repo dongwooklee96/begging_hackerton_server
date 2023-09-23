@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
@@ -92,4 +93,51 @@ async def quit_game(
     statement = delete(UserGame).where(UserGame.user_key == current_user.user_key)
     await session.execute(statement)
     await session.commit()
+    return JSONResponse(content={"message": "success"}, status_code=204)
+
+
+class WinGameReq(BaseModel):
+    product_location: str
+    get_product_time: str
+    longitude: float
+    latitude: float
+
+
+@game_router.post("/win/{product_key}")
+async def win_game(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    req: WinGameReq,
+    product_key: int,
+    session: AsyncSession = Depends(get_session),
+):
+    """
+    유저가 게임에서 승리한다.
+    """
+    statement = select(Game).where(Game.product_key == product_key)
+    result = await session.execute(statement)
+    game = result.scalar_one_or_none()
+    if not game:
+        return JSONResponse(content={"message": "게임이 존재하지 않습니다."}, status_code=400)
+    # 게임에 참여하고 있지 않은 경우에는 에러를 리턴한다.
+    statement = (
+        select(UserGame)
+        .where(UserGame.user_key == current_user.user_key)
+        .where(UserGame.game_key == game.game_key)
+    )
+    result = await session.execute(statement)
+    current_user_joined_game: UserGame = result.one()
+    if len(current_user_joined_game) == 0:
+        return JSONResponse(
+            content={"message": "해당 유저는 게임에 참여하고 있지 않습니다."}, status_code=400
+        )
+
+    # 정보 업데이트
+    current_user_joined_game.is_win = True
+    current_user_joined_game.product_location = req.product_location
+    current_user_joined_game.get_product_time = req.get_product_time
+    current_user_joined_game.longitude = req.longitude
+    current_user_joined_game.latitude = req.latitude
+
+    await session.commit()
+
     return JSONResponse(content={"message": "success"}, status_code=204)
