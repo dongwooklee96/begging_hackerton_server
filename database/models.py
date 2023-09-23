@@ -18,16 +18,12 @@ class TimestampModel(SQLModel):
     )
 
 
-class DeletedModel(SQLModel):
-    deleted: bool = Field(default_factory=False, nullable=False)
-
-
 # ----------------------------------------------------
 
 
 # 엔티티 테이블
 # ----------------------------------------------------
-class User(TimestampModel, DeletedModel, table=True):
+class User(TimestampModel, table=True):
     """
     유저 테이블
     """
@@ -39,7 +35,7 @@ class User(TimestampModel, DeletedModel, table=True):
     nickname: str = Field()
 
 
-class Category(TimestampModel, DeletedModel, table=True):
+class Category(TimestampModel, table=True):
     """
     카테고리 테이블
     """
@@ -50,7 +46,7 @@ class Category(TimestampModel, DeletedModel, table=True):
     category_name: str = Field()
 
 
-class Product(TimestampModel, DeletedModel, table=True):
+class Product(TimestampModel, table=True):
     """
     상품 테이블
     """
@@ -58,11 +54,21 @@ class Product(TimestampModel, DeletedModel, table=True):
     __tablename__ = "product"
 
     product_key: int = Field(primary_key=True)
-    category_key: int = Field()
-    user_key: int = Field()
+    title: str
+    category_key: int
+    description: str
+    location: str
+    latitude: float
+    longitude: float
+    game_type: int
+    max_participants: int
+    user_key: int
+    valid_start_time: datetime
+    valid_end_time: datetime
+    is_valid: bool
 
 
-class Prize(TimestampModel, DeletedModel, table=True):
+class Prize(TimestampModel, table=True):
     """
     업적 테이블
     """
@@ -73,7 +79,7 @@ class Prize(TimestampModel, DeletedModel, table=True):
     prize_name: str = Field()
 
 
-class Game(TimestampModel, DeletedModel, table=True):
+class Game(TimestampModel, table=True):
     """
     게임 테이블
     """
