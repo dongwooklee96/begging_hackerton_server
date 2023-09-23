@@ -1,5 +1,5 @@
 FROM ubuntu:latest
-LABEL authors="dwlee"
+LABEL authors="YoujeongChoi"
 
 ENTRYPOINT ["top", "-b"]
 
