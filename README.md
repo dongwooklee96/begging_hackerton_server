@@ -1,5 +1,7 @@
-# README
+# Ddip - Backend
 
+
+### How to Start Server
 ```bash
 # EC2 ssh 접속
 # pem키 받아서 저장한 위치로 이동 후 접속
