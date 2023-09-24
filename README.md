@@ -8,7 +8,8 @@
 $ sudo ssh -i "ddip.pem" ubuntu@ec2-13-125-131-81.ap-northeast-2.compute.amazonaws.com
 
 # Switch to the root account and navigate to the directory containing the server code
-## ERROR:    Error loading ASGI app. Could not import module "main". 오류발생시 현재 디렉토리 확인하기
+## Error - Check the current directory if this error occurs
+## Error loading ASGI app. Could not import module "main". ##
 $ sudo -i 
 $ cd ddip-server/
 
