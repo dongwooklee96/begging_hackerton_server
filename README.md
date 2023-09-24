@@ -1,3 +1,45 @@
+# README
+
+```bash
+# EC2 ssh 접속
+# pem키 받아서 저장한 위치로 이동 후 접속
+$ sudo ssh -i "ddip.pem" ubuntu@ec2-13-125-131-81.ap-northeast-2.compute.amazonaws.com
+
+# root 계정으로 전환 후 서버 코드있는 디렉토리로 이동
+## ERROR:    Error loading ASGI app. Could not import module "main". 오류발생시 현재 디렉토리 확인하기
+$ sudo -i 
+$ cd ddip-server/
+
+# 서버 실행
+$ uvicorn main:app
+
+################# 참고 #################
+# CI/CD 미구현으로 서버 코드 git 변동 사항 발생 시 pull 받아줘야함
+$ git pull
+
+# nginx 중지
+$ service nginx restart
+
+# nginx 환경설정 파일
+$ cd
+$ vi /etc/nginx/sites-enabled/default
+
+# fast api 환경설정 파일
+$ cd
+$ vi /etc/nginx/sites-enabled/fastapi_nginx
+
+```
+
+
+
+
+
+
+
+
+
+
+
 # vinyl_search_server
 
 ```python
